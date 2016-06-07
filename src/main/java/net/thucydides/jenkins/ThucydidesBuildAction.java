@@ -23,19 +23,18 @@
  */
 package net.thucydides.jenkins;
 
-import static net.thucydides.jenkins.ThucydidesPlugin.getBuildReportFolder;
 import hudson.FilePath;
-import hudson.model.Action;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+
+import static net.thucydides.jenkins.ThucydidesPlugin.getBuildReportFolder;
 
 /**
  * Build level action to display the Thucydides result summary of the last build.
@@ -92,10 +91,14 @@ public class ThucydidesBuildAction implements Action {
      */
     public DirectoryBrowserSupport doDynamic(StaplerRequest req, StaplerResponse rsp)
             throws IOException, ServletException, InterruptedException {
+        // since Jenkins blocks JavaScript as described at
+        // https://wiki.jenkins-ci.org/display/JENKINS/Configuring+Content+Security+Policy and fact that plugin uses JS
+        // to display charts, following must be applied
+        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "");
 
         AbstractProject<?, ?> project = build.getProject();
         String title = project.getDisplayName() + " Thucydides Result Summary";
         FilePath systemDirectory = new FilePath(getBuildReportFolder(build));
-        return new DirectoryBrowserSupport(this, systemDirectory, title, null, false);
+        return new DirectoryBrowserSupport(this, systemDirectory, title, getIconFileName(), false);
     }
 }
