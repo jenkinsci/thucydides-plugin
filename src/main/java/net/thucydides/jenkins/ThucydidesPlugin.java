@@ -26,7 +26,7 @@ package net.thucydides.jenkins;
 import hudson.Plugin;
 import hudson.PluginWrapper;
 import hudson.model.AbstractBuild;
-import hudson.model.Hudson;
+import jenkins.model.Jenkins;
 
 import java.io.File;
 
@@ -52,8 +52,7 @@ public class ThucydidesPlugin extends Plugin {
      */
     public static File getBuildReportFolder(AbstractBuild<?, ?> build) {
         assert build != null;
-        File reportFolder = new File(build.getRootDir(), REPORT_FOLDER);
-        return reportFolder;
+        return new File(build.getRootDir(), REPORT_FOLDER);
     }
 
     /**
@@ -62,7 +61,7 @@ public class ThucydidesPlugin extends Plugin {
      * @return resource path
      */
     public static String getPluginResourcePath() {
-        PluginWrapper wrapper = Hudson.getInstance().getPluginManager()
+        PluginWrapper wrapper = Jenkins.getInstance().getPluginManager()
                 .getPlugin(ThucydidesPlugin.class);
         return "/plugin/" + wrapper.getShortName() + "/";
     }
